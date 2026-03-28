@@ -49,19 +49,7 @@ jobs:
 
       - name: Static verification
         if: steps.diff.outputs.changed == 'true'
-        run: |
-          set -euo pipefail
-          ./tests/test-dev-image-layout.sh
-          ./tests/test-dependency-update-workflow.sh
-          for f in scripts/*.sh tests/*.sh; do bash -n "$f"; done
-          python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
-          python3 - <<'PY'
-          import yaml
-          for path in ['.github/workflows/docker-publish.yml', '.github/workflows/dependency-refresh.yml']:
-              with open(path) as fh:
-                  yaml.safe_load(fh)
-              print(f'{path} ok')
-          PY
+        run: ./tests/test-static.sh
 
       - name: Build local test image
         if: steps.diff.outputs.changed == 'true'

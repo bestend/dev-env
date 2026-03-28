@@ -18,8 +18,7 @@
 ## 빠른 시작
 
 ```bash
-cp .env.example .env
-./tests/test-dev-image-layout.sh
+./tests/test-static.sh
 ```
 
 빌드:
@@ -51,9 +50,7 @@ docker run -d --name dev-env-code -e ENABLE_CODE_SERVER=true -e CODE_SERVER_PASS
 정적 검증:
 
 ```bash
-./tests/test-dev-image-layout.sh
-bash -n scripts/*.sh tests/*.sh
-python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
+./tests/test-static.sh
 ```
 
 런타임 검증:

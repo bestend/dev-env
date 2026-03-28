@@ -104,6 +104,7 @@ docker run --rm -e ENABLE_SSHD=true -e AUTHORIZED_KEYS_SOURCE=/workspace/.dev-en
 컨테이너 런타임 테스트(도커 필요):
 ```bash
 ./tests/test-dev-image-runtime.sh all-in-one-dev:latest
+./tests/test-dev-image-services.sh all-in-one-dev:latest
 ```
 
 ## 주의

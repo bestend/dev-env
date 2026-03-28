@@ -17,9 +17,7 @@
 
 ### 기본
 ```bash
-./tests/test-dev-image-layout.sh
-bash -n scripts/*.sh tests/*.sh
-python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
+./tests/test-static.sh
 ```
 
 ### Docker/런타임 관련 변경 시
@@ -42,5 +40,5 @@ docker build -t bestend/dev-env:test .
 
 ## 자동 dependency refresh
 - `.github/workflows/dependency-refresh.yml` 는 매일 02:00 KST에 실행된다.
-- 이 workflow는 Dockerfile / .env.example /  의 하드코딩 버전만 갱신한다.
+- 이 workflow는 Dockerfile / .env.example 의 하드코딩 버전만 갱신한다.
 - 테스트 통과 후에만 main에 직접 push 하며, 이어서 docker-publish workflow를 트리거한다.
