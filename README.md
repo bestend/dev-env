@@ -60,11 +60,12 @@ python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
 
 ```bash
 ./tests/test-dev-image-runtime.sh bestend/dev-env:local
+./tests/test-dev-image-services.sh bestend/dev-env:local
 ```
 
 ## Docker Hub 배포
 
-`main` 브랜치에 push 되면 GitHub Actions가 이미지를 Docker Hub로 푸시합니다.
+`main` 브랜치에 push 되면 GitHub Actions가 먼저 정적 검증 + 이미지 빌드 + 런타임/서비스 테스트를 수행하고, 모두 통과한 경우에만 Docker Hub로 푸시합니다.
 
 태그 규칙:
 - `YYYYMMDDHH-<shortsha>`

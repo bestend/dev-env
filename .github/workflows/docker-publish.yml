@@ -7,7 +7,52 @@ on:
   workflow_dispatch:
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Static verification
+        run: |
+          set -euo pipefail
+          ./tests/test-dev-image-layout.sh
+          for f in scripts/*.sh tests/*.sh; do bash -n "$f"; done
+          python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
+          python3 - <<'PY'
+          import yaml
+          for path in ['docker-compose.yml', '.github/workflows/docker-publish.yml']:
+              with open(path) as fh:
+                  yaml.safe_load(fh)
+              print(f'{path} ok')
+          PY
+
+      - name: Build local test image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          load: true
+          push: false
+          provenance: false
+          sbom: false
+          tags: bestend/dev-env:ci-test
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Runtime smoke tests
+        run: ./tests/test-dev-image-runtime.sh bestend/dev-env:ci-test
+
+      - name: Service smoke tests
+        run: ./tests/test-dev-image-services.sh bestend/dev-env:ci-test
+
   docker:
+    needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: read

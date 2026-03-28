@@ -26,6 +26,7 @@ python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
 ```bash
 docker build -t bestend/dev-env:test .
 ./tests/test-dev-image-runtime.sh bestend/dev-env:test
+./tests/test-dev-image-services.sh bestend/dev-env:test
 ```
 
 ## 릴리스 규칙
