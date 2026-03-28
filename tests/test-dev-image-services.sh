@@ -2,6 +2,7 @@
 set -euo pipefail
 
 CONTAINER_BIN=${CONTAINER_BIN:-docker}
+CONTAINER_RUN_ARGS=${CONTAINER_RUN_ARGS:-}
 IMAGE_TAG=${1:-all-in-one-dev:latest}
 SSH_NAME=dev-env-ssh-test
 CODE_NAME=dev-env-code-test
@@ -15,7 +16,8 @@ trap cleanup EXIT
 
 cleanup
 
-"${CONTAINER_BIN}" run -d --name "${SSH_NAME}" -e ENABLE_SSHD=true -p "${SSH_PORT}:2222" "${IMAGE_TAG}" >/dev/null
+# shellcheck disable=SC2086
+"${CONTAINER_BIN}" run -d ${CONTAINER_RUN_ARGS} --name "${SSH_NAME}" -e ENABLE_SSHD=true -p "${SSH_PORT}:2222" "${IMAGE_TAG}" >/dev/null
 sleep 5
 python3 - <<PY
 import socket
@@ -26,7 +28,8 @@ print("ssh_port_open")
 s.close()
 PY
 
-"${CONTAINER_BIN}" run -d --name "${CODE_NAME}" -e ENABLE_CODE_SERVER=true -e CODE_SERVER_PASSWORD=changeme -p "${CODE_SERVER_PORT}:8080" "${IMAGE_TAG}" >/dev/null
+# shellcheck disable=SC2086
+"${CONTAINER_BIN}" run -d ${CONTAINER_RUN_ARGS} --name "${CODE_NAME}" -e ENABLE_CODE_SERVER=true -e CODE_SERVER_PASSWORD=changeme -p "${CODE_SERVER_PORT}:8080" "${IMAGE_TAG}" >/dev/null
 sleep 8
 python3 - <<PY
 import socket

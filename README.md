@@ -13,7 +13,7 @@
 - Anthropic Claude Code
 - code-server
 - 선택형 SSH 서버
-- VS Code Dev Containers 설정
+- VS Code Dev Containers 설정(Dockerfile 직접 사용)
 
 ## 빠른 시작
 
@@ -31,19 +31,19 @@ docker build -t bestend/dev-env:local .
 개발 컨테이너:
 
 ```bash
-docker compose up -d dev
+docker run --rm -it bestend/dev-env:local
 ```
 
-SSH 프로필:
+SSH 실행:
 
 ```bash
-docker compose --profile ssh up -d ssh
+docker run -d --name dev-env-ssh -e ENABLE_SSHD=true -p 2222:2222 bestend/dev-env:local
 ```
 
-code-server 프로필:
+code-server 실행:
 
 ```bash
-docker compose --profile code-server up -d code-server
+docker run -d --name dev-env-code -e ENABLE_CODE_SERVER=true -e CODE_SERVER_PASSWORD=changeme -p 8080:8080 bestend/dev-env:local
 ```
 
 ## 검증
@@ -82,3 +82,15 @@ python3 -m json.tool .devcontainer/devcontainer.json >/dev/null
 ## 참고
 - code-server 확장 사전설치 중 `ms-python.vscode-pylance` 는 현재 레지스트리에서 찾지 못할 수 있습니다.
 - 기본 powerlevel10k 아이콘 표시에는 Nerd Font가 필요합니다. 권장 폰트: `MesloLGS NF`.
+
+## 자동 버전 업데이트
+
+매일 **KST 기준 오전 2시**(GitHub Actions cron 기준 `17:00 UTC`)에 `dependency-refresh` workflow가 실행됩니다.
+
+이 workflow는 다음을 수행합니다.
+- 하드코딩된 버전 상수 최신화
+- 정적 검증
+- 이미지 빌드
+- 런타임/서비스 테스트
+- 통과 시 `main` 직접 푸시
+- 이후 `docker-publish` workflow 수동 트리거

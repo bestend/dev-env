@@ -1,13 +1,13 @@
 {
   "name": "all-in-one-dev",
-  "dockerComposeFile": [
-    "../docker-compose.yml"
-  ],
-  "service": "dev",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
   "workspaceFolder": "/workspace",
   "remoteUser": "dev",
   "overrideCommand": false,
-  "shutdownAction": "stopCompose",
+  "shutdownAction": "stopContainer",
   "customizations": {
     "vscode": {
       "settings": {
@@ -18,7 +18,6 @@
       },
       "extensions": [
         "ms-python.python",
-        "ms-python.vscode-pylance",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
         "ms-azuretools.vscode-docker",

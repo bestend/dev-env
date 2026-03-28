@@ -11,14 +11,14 @@
 - OpenAI Codex CLI (`@openai/codex`)
 - Anthropic Claude Code (`@anthropic-ai/claude-code`)
 - code-server
-- VS Code Dev Containers 진입점
+- VS Code Dev Containers 진입점(Dockerfile 직접 사용)
 - 선택형 SSH 서버
 
 ## 빠른 시작
 ```bash
 cp .env.example .env
-docker compose build dev
-docker compose up -d dev
+docker build -t bestend/dev-env:local .
+docker run --rm -it bestend/dev-env:local
 ```
 
 ## VS Code Dev Containers
@@ -28,9 +28,9 @@ docker compose up -d dev
 
 ## code-server
 ```bash
-docker compose --profile code-server up -d code-server
+docker run -d --name dev-env-code -e ENABLE_CODE_SERVER=true -e CODE_SERVER_PASSWORD=changeme -p 8080:8080 bestend/dev-env:local
 ```
-접속: `http://localhost:${CODE_SERVER_PORT:-8080}`
+접속: `http://localhost:8080`
 
 ### 인증
 - 기본은 `CODE_SERVER_AUTH=password`
@@ -53,7 +53,7 @@ code-server --install-extension <extension-id>
 
 ## SSH
 ```bash
-docker compose --profile ssh up -d ssh
+docker run -d --name dev-env-ssh -e ENABLE_SSHD=true -p 2222:2222 bestend/dev-env:local
 ssh -p 2222 dev@localhost
 ```
 
@@ -65,7 +65,7 @@ ssh -p 2222 dev@localhost
 ### authorized_keys 주입
 예:
 ```bash
-docker compose run --rm -e ENABLE_SSHD=true -e AUTHORIZED_KEYS_SOURCE=/workspace/.dev-env-overrides/authorized_keys dev sleep infinity
+docker run --rm -e ENABLE_SSHD=true -e AUTHORIZED_KEYS_SOURCE=/workspace/.dev-env-overrides/authorized_keys -v "$PWD:/workspace" bestend/dev-env:local sleep infinity
 ```
 또는 volume mount 로 `$HOME/.ssh/authorized_keys` 제공.
 

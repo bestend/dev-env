@@ -4,7 +4,7 @@
 
 ## 목적
 - 개발용 올인원 Docker 이미지를 유지한다.
-- Dockerfile, devcontainer, compose, shell/tmux 설정, release workflow를 함께 관리한다.
+- Dockerfile, devcontainer, shell/tmux 설정, release workflow를 함께 관리한다.
 
 ## 작업 원칙
 - 새 의존성 추가는 꼭 필요한 경우만.
@@ -38,3 +38,9 @@ docker build -t bestend/dev-env:test .
 - 인증 정보는 이미지에 bake 하지 않는다.
 - `code-server` 확장 가용성은 레지스트리 차이(OpenVSX 등)로 달라질 수 있다.
 - powerlevel10k 아이콘은 클라이언트 폰트 환경 영향이 있다.
+
+
+## 자동 dependency refresh
+- `.github/workflows/dependency-refresh.yml` 는 매일 02:00 KST에 실행된다.
+- 이 workflow는 Dockerfile / .env.example /  의 하드코딩 버전만 갱신한다.
+- 테스트 통과 후에만 main에 직접 push 하며, 이어서 docker-publish workflow를 트리거한다.
